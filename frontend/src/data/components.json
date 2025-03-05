@@ -1,0 +1,164 @@
+[
+  {
+    "id": "text-input",
+    "name": "Text Input",
+    "category": "inputs",
+    "color": "#2196F3",
+    "inputs": [],
+    "outputs": [
+      {
+        "id": "text_out",
+        "name": "Text Output",
+        "type": "text"
+      }
+    ],
+    "fields": [
+      {
+        "type": "text",
+        "id": "text-content",
+        "label": "Text Input",
+        "placeholder": "Enter text..."
+      }
+    ]
+  },
+  {
+    "id": "image-input",
+    "name": "Image Input",
+    "category": "inputs",
+    "color": "#4CAF50",
+    "inputs": [],
+    "outputs": [
+      {
+        "id": "image_out",
+        "name": "Image Output",
+        "type": "image"
+      }
+    ],
+    "fields": [
+      {
+        "type": "file",
+        "id": "image-file",
+        "label": "Image",
+        "props": {
+          "accept": "image/*"
+        }
+      }
+    ]
+  },
+  {
+    "id": "text-processor",
+    "name": "Text Processor",
+    "category": "processors",
+    "color": "#9C27B0",
+    "inputs": [
+      {
+        "id": "text_in",
+        "name": "Text Input",
+        "type": "text"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "text_out",
+        "name": "Processed Text",
+        "type": "text"
+      }
+    ],
+    "fields": [
+      {
+        "type": "select",
+        "id": "text-operation",
+        "label": "Operation",
+        "options": [
+          { "value": "uppercase", "label": "Convert to uppercase" },
+          { "value": "lowercase", "label": "Convert to lowercase" },
+          { "value": "reverse", "label": "Reverse text" },
+          { "value": "count", "label": "Count characters" }
+        ],
+        "defaultValue": "uppercase"
+      }
+    ]
+  },
+  {
+    "id": "image-processor",
+    "name": "Image Processor",
+    "category": "processors",
+    "color": "#FF9800",
+    "inputs": [
+      {
+        "id": "image_in",
+        "name": "Image Input",
+        "type": "image"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "image_out",
+        "name": "Processed Image",
+        "type": "image"
+      }
+    ],
+    "fields": [
+      {
+        "type": "select",
+        "id": "image-filter",
+        "label": "Filter",
+        "options": [
+          { "value": "grayscale", "label": "Grayscale" },
+          { "value": "sepia", "label": "Sepia" },
+          { "value": "blur", "label": "Blur" },
+          { "value": "invert", "label": "Invert colors" }
+        ],
+        "defaultValue": "grayscale"
+      }
+    ]
+  },
+  {
+    "id": "number-input",
+    "name": "Number Input",
+    "category": "inputs",
+    "color": "#00BCD4",
+    "inputs": [],
+    "outputs": [
+      {
+        "id": "number_out",
+        "name": "Number Output",
+        "type": "number"
+      }
+    ],
+    "fields": [
+      {
+        "type": "number",
+        "id": "number-value",
+        "label": "Number",
+        "placeholder": "Enter a number",
+        "defaultValue": 0,
+        "props": {
+          "min": 0,
+          "step": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "receiver",
+    "name": "Output Display",
+    "category": "outputs",
+    "color": "#F44336",
+    "inputs": [
+      {
+        "id": "data_in",
+        "name": "Data Input",
+        "type": ["text", "image", "number"]
+      }
+    ],
+    "outputs": [],
+    "fields": [
+      {
+        "type": "display",
+        "id": "output",
+        "label": "Result"
+      }
+    ]
+  }
+]

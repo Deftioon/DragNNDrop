@@ -1,0 +1,72 @@
+.connection-node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 6px 0;
+  height: 16px;
+}
+
+.input-node {
+  justify-content: flex-start;
+  padding-left: 8px;
+}
+
+.output-node {
+  justify-content: flex-end;
+  padding-right: 8px;
+}
+
+.node-point {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s ease-out;
+  z-index: 10;
+  /* Remove border and use pure colors */
+  border: none;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.node-point:hover {
+  transform: scale(1.35);
+}
+
+.node-tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.node-tooltip.left {
+  right: 24px;
+}
+
+.node-tooltip.right {
+  left: 24px;
+}
+
+/* Specific styling based on data types - using pure colors */
+.node-point[data-node-data-type="text"] {
+  background-color: #2196F3;
+}
+
+.node-point[data-node-data-type="image"] {
+  background-color: #4CAF50;
+}
+
+.node-point[data-node-data-type="number"] {
+  background-color: #00BCD4;
+}
+
+/* For nodes that accept multiple types */
+.node-point[data-node-data-type="text,image,number"] {
+  background-color: #9C27B0;
+}

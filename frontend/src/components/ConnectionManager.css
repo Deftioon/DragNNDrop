@@ -1,0 +1,49 @@
+.connection-manager {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+  will-change: transform; /* Hint to browser for optimization */
+}
+
+.connections-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  contain: strict; /* Improve rendering performance */
+}
+
+.connections-container {
+  will-change: transform;
+}
+
+/* Update hover styles for better visibility */
+.connection-line {
+  pointer-events: all;
+  cursor: pointer;
+  /* Remove transition for more immediate feedback */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Make the hover effect more noticeable at all zoom levels */
+.connection-line:hover {
+  stroke-opacity: 0.8;
+  filter: drop-shadow(0 0 2px var(--color-primary));
+}
+
+.preview-connection-line {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Adding a glow effect to indicate active connection */
+.connection-active {
+  filter: drop-shadow(0 0 3px var(--color-primary));
+}

@@ -1,0 +1,45 @@
+.drag-handle {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  width: 24px;
+  height: 24px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  z-index: 100;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.1s;
+}
+
+.drag-handle:hover {
+  background-color: #e0e0e0;
+  border-color: #bbb;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+  background-color: #d0d0d0;
+}
+
+.drag-handle-dots {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px;
+}
+
+.drag-handle-dot {
+  width: 4px;
+  height: 4px;
+  background-color: #555;
+  border-radius: 50%;
+}
+
+.drag-handle:hover .drag-handle-dot {
+  background-color: #333;
+}

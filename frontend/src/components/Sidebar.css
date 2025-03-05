@@ -1,0 +1,97 @@
+.sidebar {
+  width: 250px;
+  background-color: var(--color-bg-sidebar);
+  border-right: 1px solid var(--color-border);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 15px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--color-text-primary);
+}
+
+.component-category {
+  margin-bottom: 10px;
+}
+
+.category-title {
+  padding: 8px 15px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-category);
+  display: flex;
+  align-items: center;
+}
+
+.component-list {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.component-card {
+  background-color: var(--color-bg-component);
+  border-radius: 6px;
+  padding: 10px;
+  cursor: move;
+  box-shadow: 0 2px 4px var(--color-shadow);
+  border-left: 4px solid;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.component-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--color-shadow);
+}
+
+.component-header {
+  margin-bottom: 6px;
+}
+
+.component-header h3 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.component-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 5px;
+}
+
+.component-ports {
+  background-color: var(--color-bg-button);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+/* For scrollbar styling */
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: var(--color-bg-sidebar);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: var(--color-scrollbar);
+  border-radius: 4px;
+}

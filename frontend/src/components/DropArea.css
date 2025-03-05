@@ -1,0 +1,273 @@
+.drop-area {
+  flex: 1;
+  height: 100%;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden; /* Changed to hidden - the canvas will handle scrolling */
+  background-color: var(--bg-secondary);
+  overscroll-behavior: none; /* Prevent browser navigation gestures */
+  touch-action: none; /* Disable default touch actions for mobile */
+}
+
+.drop-area-active {
+  border-color: #5c67f2;
+  background-color: rgba(92, 103, 242, 0.05);
+}
+
+.grid-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(to right, rgba(160, 160, 160, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(160, 160, 160, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  z-index: 0;
+  pointer-events: none; /* Make sure grid doesn't interfere with interaction */
+}
+
+/* Add a large canvas with transform-based panning and zooming */
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5000px;
+  height: 5000px;
+  transform-origin: 0 0;
+  transition: transform 0.05s linear;  /* Faster transitions for more responsive panning */
+  will-change: transform;
+  z-index: 1;
+}
+
+.drop-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #999;
+  font-size: 1.2rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.dropped-component {
+  position: absolute;
+  z-index: 10;
+  transition: transform 0.1s;
+}
+
+/* Removed the component-wrapper styles that created the box */
+.component-wrapper {
+  position: relative;
+  min-width: 180px;
+  user-select: none;
+  transform-origin: center center;
+}
+
+.component-container {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Component-specific styling */
+.component {
+  padding: 5px 0; /* Reduce horizontal padding since we now have dedicated node columns */
+  border-radius: 6px;
+  background-color: var(--color-surface, white);
+  width: 100%;
+  box-shadow: 0 3px 8px var(--color-shadow, rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--color-border, #ddd);
+  border-left-width: 3px;
+}
+
+.component label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--color-text-primary, #333);
+  font-size: 14px;
+}
+
+.component input[type="file"],
+.component input[type="text"],
+.component input[type="number"],
+.component select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 4px;
+  background-color: var(--color-bg-button, white);
+  color: var(--color-text-primary, #333);
+  font-size: 14px;
+}
+
+.component input[type="file"]:hover,
+.component input[type="text"]:hover,
+.component input[type="number"]:hover,
+.component select:hover {
+  border-color: var(--color-primary, #bbb);
+}
+
+.component input[type="file"]:focus,
+.component input[type="text"]:focus,
+.component input[type="number"]:focus,
+.component select:focus {
+  border-color: var(--color-primary, #5c67f2);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-drop-highlight, rgba(92, 103, 242, 0.2));
+}
+
+.component .processor-content {
+  background-color: var(--color-surface, #eef1ff);
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  color: var(--color-text-secondary, #555);
+  border: 1px solid transparent;
+  font-size: 13px;
+}
+
+.component .receiver-output {
+  min-height: 70px;
+  border: 1px dashed var(--color-border, #ddd);
+  border-radius: 5px;
+  padding: 10px;
+  color: var(--color-text-secondary, #555);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-surface, #f5f5f5);
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* Hover effects */
+.component:hover {
+  background-color: var(--color-drop-highlight, rgba(92, 103, 242, 0.05));
+  transition: background-color 0.2s ease;
+  box-shadow: 0 0 0 2px var(--color-primary-hover, rgba(92, 103, 242, 0.4));
+}
+
+/* Remove the old specific hover effects */
+/* 
+.component.image-input:hover,
+.component.text-input:hover {
+  background-color: rgba(92, 103, 242, 0.05);
+}
+*/
+
+/* Remove the specific styling for different component types */
+/* Delete or comment out these fixed color assignments: */
+/*
+.component.image-input {
+  border-left: 3px solid #4CAF50;
+}
+
+.component.text-input {
+  border-left: 3px solid #2196F3;
+}
+
+.component.image-processor {
+  border-left: 3px solid #FF9800;
+}
+
+.component.text-processor {
+  border-left: 3px solid #9C27B0;
+}
+
+.component.receiver {
+  border-left: 3px solid #F44336;
+}
+
+.component.number-input {
+  border-left: 3px solid #00BCD4;
+}
+
+/* Add zoom controls */
+.zoom-controls {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-floating, rgba(255, 255, 255, 0.95));
+  padding: 6px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px var(--shadow-color, rgba(0, 0, 0, 0.2));
+  z-index: 100;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color, transparent);
+}
+
+.zoom-controls button {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-button, white);
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 3px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 0 2px;
+  color: var(--text-primary);
+}
+
+.zoom-controls button:hover {
+  background-color: var(--bg-button-hover, #f5f5f5);
+}
+
+.zoom-level {
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 500;
+  user-select: none;
+  color: var(--text-primary);
+}
+
+/* Add orientation information */
+.canvas-info {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  padding: 8px 12px;
+  background-color: var(--bg-floating, rgba(255, 255, 255, 0.9));
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-secondary, #555);
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 1px 4px var(--shadow-color, rgba(0, 0, 0, 0.15));
+  border: 1px solid var(--border-color, transparent);
+}
+
+.info-text {
+  opacity: 0.8;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* Add minimap for orientation (optional enhancement) */
+.minimap {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  width: 150px;
+  height: 100px;
+  border: 1px solid #ccc;
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 100;
+  display: none; /* Hidden by default, can be enabled later */
+}
+
+/* Add grabbing cursor for panning state */
+.drop-area.panning {
+  cursor: grabbing !important;
+}

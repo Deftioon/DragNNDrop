@@ -1,0 +1,87 @@
+:root {
+  /* Base theme variables with default light theme */
+  --color-primary: #5c67f2;
+  --color-secondary: #4caf50;
+  --color-primary-hover: #4a56e0;
+  --color-primary-active: #3b46cd;
+  --color-background: #ffffff;
+  --color-surface: #f5f5f5;
+  --color-error: #B00020;
+  
+  --color-on-primary: #ffffff;
+  --color-on-secondary: #ffffff;
+  --color-on-background: #333333;
+  --color-on-surface: #333333;
+  --color-on-error: #ffffff;
+  
+  --color-text-primary: #212121;
+  --color-text-secondary: #666666;
+  --color-border: #e0e0e0;
+  --color-divider: #e0e0e0;
+  --color-shadow: rgba(0, 0, 0, 0.15);
+  
+  /* UI specific colors */
+  --color-bg-floating: rgba(255, 255, 255, 0.95);
+  --color-bg-button: #ffffff;
+  --color-bg-button-hover: #f0f0f0;
+  --color-drop-highlight: rgba(92, 103, 242, 0.1);
+  
+  /* Legacy variable names for backward compatibility */
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --bg-primary: var(--color-background);
+  --bg-secondary: var(--color-surface);
+  --border-color: var(--color-border);
+  --shadow-color: var(--color-shadow);
+  --bg-floating: var(--color-bg-floating);
+  --bg-button: var(--color-bg-button);
+  --bg-button-hover: var(--color-bg-button-hover);
+
+  /* UI component specific colors */
+  --color-component-bg: #ffffff;
+  --color-input-bg: #ffffff;
+  --color-input-border: #e0e0e0;
+  --color-component-highlight: rgba(92, 103, 242, 0.4);
+}
+
+body.dark-theme {
+  /* Dark theme values */
+  --color-primary: #7685ff; /* Match with typescript definition */
+  --color-secondary: #4caf50;
+  --color-primary-hover: #8795ff;
+  --color-primary-active: #99a5ff;
+  --color-background: #121212;
+  --color-surface: #212121;
+  --color-error: #CF6679;
+  
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #a0a0a0;
+  --color-border: #2d2d2d;
+  --color-divider: #2d2d2d;
+  --color-shadow: rgba(0, 0, 0, 0.3);
+  
+  --color-bg-floating: rgba(33, 33, 33, 0.95);
+  --color-bg-button: #2d2d2d;
+  --color-bg-button-hover: #3d3d3d;
+  --color-drop-highlight: rgba(92, 103, 242, 0.2);
+  
+  /* Update legacy variables */
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --bg-primary: var(--color-background);
+  --bg-secondary: var(--color-surface);
+  --border-color: var(--color-border);
+  --shadow-color: var(--color-shadow);
+  --bg-floating: var(--color-bg-floating);
+
+  /* UI component specific colors */
+  --color-component-bg: #2a2a2a;
+  --color-input-bg: #333333;
+  --color-input-border: #444444;
+  --color-component-highlight: rgba(118, 133, 255, 0.4);
+}
+
+/* Transition for smooth theme switching */
+* {
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}

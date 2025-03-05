@@ -1,0 +1,167 @@
+.generic-component {
+  width: 100%;
+  background-color: var(--color-surface, white);
+  border-radius: 6px;
+  overflow: visible; /* Changed from hidden to allow nodes to stick out */
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.generic-component:hover {
+  background-color: var(--color-drop-highlight, rgba(92, 103, 242, 0.05));
+}
+
+.component-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: var(--color-text-primary, #333);
+}
+
+.component-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.component-field {
+  margin-bottom: 6px;
+}
+
+.component-field label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-primary, #333);
+}
+
+/* Field type styling */
+.component-field input[type="text"],
+.component-field input[type="number"],
+.component-field select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 4px;
+  background-color: var(--color-bg-button, white);
+  color: var(--color-text-primary, #333);
+  font-size: 14px;
+}
+
+.component-field input[type="file"] {
+  width: 100%;
+  padding: 4px 0;
+  color: var(--color-text-primary, #333);
+  font-size: 13px;
+}
+
+.component-field input[type="text"]:hover,
+.component-field input[type="number"]:hover,
+.component-field select:hover,
+.component-field input[type="file"]:hover {
+  border-color: var(--color-primary, #9da6ff);
+  transition: border-color 0.2s ease;
+}
+
+.component-field input[type="text"]:focus,
+.component-field input[type="number"]:focus,
+.component-field select:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-drop-highlight, rgba(92, 103, 242, 0.2));
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.component-button {
+  padding: 6px 10px;
+  background-color: var(--color-bg-button, #eef1ff);
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--color-text-primary, #333);
+  transition: background-color 0.2s, transform 0.1s;
+  width: 100%;
+  font-size: 13px;
+}
+
+.component-button:hover {
+  background-color: var(--color-bg-button-hover, #e4e9ff);
+  transform: translateY(-1px);
+}
+
+.component-button:active {
+  transform: translateY(0px);
+}
+
+.display-content {
+  min-height: 50px;
+  border: 1px dashed var(--color-border, #ddd);
+  border-radius: 4px;
+  padding: 8px;
+  background-color: var(--color-surface, #f5f5f5);
+  color: var(--color-text-secondary, #555);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  font-size: 13px;
+}
+
+.component-content {
+  display: grid;
+  grid-template-columns: 20px 1fr 20px; /* Create 3 columns: input nodes, main content, output nodes */
+  position: relative;
+  min-width: 180px;
+}
+
+.component-main {
+  padding: 10px;
+  grid-column: 2;
+}
+
+.input-nodes {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 12px 0;
+}
+
+.output-nodes {
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 12px 0;
+}
+
+/* Component-specific styling */
+.text-input .text-field label {
+  color: var(--color-primary, #2196F3);
+}
+
+.image-input .file-field label {
+  color: var(--color-secondary, #4CAF50);
+}
+
+.text-processor .button-field button {
+  border-left: 3px solid var(--color-primary, #9C27B0);
+}
+
+.image-processor .button-field button {
+  border-left: 3px solid var(--color-secondary, #FF9800);
+}
+
+.receiver .display-field label {
+  color: var(--color-error, #F44336);
+}
+
+.number-input .number-field label {
+  color: var(--color-primary, #00BCD4);
+}
