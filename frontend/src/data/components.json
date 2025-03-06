@@ -160,5 +160,650 @@
         "label": "Result"
       }
     ]
+  },
+  {
+    "id": "data-input",
+    "name": "Data Input",
+    "category": "data",
+    "color": "#2196F3",
+    "inputs": [],
+    "outputs": [
+      {
+        "id": "training_data_out",
+        "name": "Training Data",
+        "type": "tensor"
+      },
+      {
+        "id": "label_data_out",
+        "name": "Labelled Data",
+        "type": "tensor"
+      }
+    ],
+    "fields": [
+      {
+        "type": "select",
+        "id": "dataset",
+        "label": "Dataset",
+        "options": [
+          { "value": "mnist", "label": "MNIST" },
+          { "value": "cifar10", "label": "CIFAR-10" },
+          { "value": "custom", "label": "Custom Upload" }
+        ],
+        "defaultValue": "mnist"
+      },
+      {
+        "type": "file",
+        "id": "custom-data",
+        "label": "Custom Data",
+        "props": {
+          "accept": ".csv,.npy,.h5"
+        }
+      }
+    ]
+  },
+  {
+    "id": "data-processing",
+    "name": "Data Processing",
+    "category": "data",
+    "color": "#2196F3",
+    "inputs": [
+      {
+        "id": "data_in",
+        "name": "Input Data",
+        "type": "tensor"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "training_data_out",
+        "name": "Training Data",
+        "type": "tensor"
+      },
+      {
+        "id": "test_data_out",
+        "name": "Test Data",
+        "type": "tensor"
+      },
+      {
+        "id": "validation_data_out",
+        "name": "Validation Data",
+        "type": "tensor"
+      }
+    ],
+    "fields": [
+      {
+        "type": "number",
+        "id": "train-split",
+        "label": "Training Split",
+        "defaultValue": 0.7,
+        "props": {
+          "min": 0.1,
+          "max": 0.9,
+          "step": 0.05
+        }
+      },
+      {
+        "type": "number",
+        "id": "test-split",
+        "label": "Test Split",
+        "defaultValue": 0.15,
+        "props": {
+          "min": 0.05,
+          "max": 0.4,
+          "step": 0.05
+        }
+      },
+      {
+        "type": "number",
+        "id": "batch-size",
+        "label": "Batch Size",
+        "defaultValue": 32,
+        "props": {
+          "min": 1,
+          "max": 1024,
+          "step": 1
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "normalize",
+        "label": "Normalize Data",
+        "defaultValue": true
+      }
+    ]
+  },
+  {
+    "id": "conv-layer",
+    "name": "Convolutional Layer",
+    "category": "neural",
+    "color": "#9C27B0",
+    "inputs": [
+      {
+        "id": "data_in",
+        "name": "Input",
+        "type": "tensor"
+      },
+      {
+        "id": "kernel_in",
+        "name": "Kernel",
+        "type": "kernel"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "data_out",
+        "name": "Output",
+        "type": "tensor"
+      }
+    ],
+    "fields": [
+      {
+        "type": "number",
+        "id": "filters",
+        "label": "Filters",
+        "defaultValue": 16,
+        "props": {
+          "min": 1,
+          "max": 1024,
+          "step": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "fc-layer",
+    "name": "Fully Connected Layer",
+    "category": "neural",
+    "color": "#9C27B0",
+    "inputs": [
+      {
+        "id": "data_in",
+        "name": "Input",
+        "type": "tensor"
+      },
+      {
+        "id": "fc_property_in",
+        "name": "Properties",
+        "type": "fc_property"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "data_out",
+        "name": "Output",
+        "type": "tensor"
+      }
+    ],
+    "fields": []
+  },
+  {
+    "id": "pooling-layer",
+    "name": "Pooling Layer",
+    "category": "neural",
+    "color": "#9C27B0",
+    "inputs": [
+      {
+        "id": "data_in",
+        "name": "Input",
+        "type": "tensor"
+      },
+      {
+        "id": "kernel_in",
+        "name": "Kernel",
+        "type": "kernel"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "data_out",
+        "name": "Output",
+        "type": "tensor"
+      }
+    ],
+    "fields": [
+      {
+        "type": "select",
+        "id": "pool-type",
+        "label": "Pooling Type",
+        "options": [
+          { "value": "max", "label": "Max Pooling" },
+          { "value": "avg", "label": "Average Pooling" }
+        ],
+        "defaultValue": "max"
+      }
+    ]
+  },
+  {
+    "id": "fc-property",
+    "name": "Fully Connected Property",
+    "category": "properties",
+    "color": "#FF9800",
+    "inputs": [
+      {
+        "id": "activation_in",
+        "name": "Activation",
+        "type": "activation"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "fc_property_out",
+        "name": "FC Property",
+        "type": "fc_property"
+      }
+    ],
+    "fields": [
+      {
+        "type": "number",
+        "id": "output-size",
+        "label": "Output Size",
+        "defaultValue": 64,
+        "props": {
+          "min": 1,
+          "step": 1
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "use-bias",
+        "label": "Use Bias",
+        "defaultValue": true
+      }
+    ]
+  },
+  {
+    "id": "kernel-property",
+    "name": "Kernel Property",
+    "category": "properties",
+    "color": "#FF9800",
+    "inputs": [
+      {
+        "id": "activation_in",
+        "name": "Activation",
+        "type": "activation"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "kernel_out",
+        "name": "Kernel",
+        "type": "kernel"
+      }
+    ],
+    "fields": [
+      {
+        "type": "number",
+        "id": "kernel-size",
+        "label": "Kernel Size",
+        "defaultValue": 3,
+        "props": {
+          "min": 1,
+          "max": 11,
+          "step": 2
+        }
+      },
+      {
+        "type": "number",
+        "id": "stride",
+        "label": "Stride",
+        "defaultValue": 1,
+        "props": {
+          "min": 1,
+          "max": 4,
+          "step": 1
+        }
+      },
+      {
+        "type": "number",
+        "id": "padding",
+        "label": "Padding",
+        "defaultValue": 0,
+        "props": {
+          "min": 0,
+          "max": 10,
+          "step": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "activation-function",
+    "name": "Activation Function",
+    "category": "functions",
+    "color": "#00BCD4",
+    "inputs": [],
+    "outputs": [
+      {
+        "id": "activation_out",
+        "name": "Activation",
+        "type": "activation"
+      }
+    ],
+    "fields": [
+      {
+        "type": "select",
+        "id": "function-type",
+        "label": "Function",
+        "options": [
+          { "value": "relu", "label": "ReLU" },
+          { "value": "sigmoid", "label": "Sigmoid" },
+          { "value": "tanh", "label": "Tanh" },
+          { "value": "leaky_relu", "label": "Leaky ReLU" },
+          { "value": "elu", "label": "ELU" }
+        ],
+        "defaultValue": "relu"
+      },
+      {
+        "type": "number",
+        "id": "alpha",
+        "label": "Alpha (for Leaky ReLU/ELU)",
+        "defaultValue": 0.01,
+        "props": {
+          "min": 0.001,
+          "max": 0.5,
+          "step": 0.001
+        }
+      }
+    ]
+  },
+  {
+    "id": "loss-function",
+    "name": "Loss Function",
+    "category": "functions",
+    "color": "#00BCD4",
+    "inputs": [],
+    "outputs": [
+      {
+        "id": "loss_out",
+        "name": "Loss Function",
+        "type": "loss"
+      }
+    ],
+    "fields": [
+      {
+        "type": "select",
+        "id": "loss-type",
+        "label": "Loss Type",
+        "options": [
+          { "value": "mse", "label": "Mean Squared Error" },
+          { "value": "cross_entropy", "label": "Cross Entropy" },
+          { "value": "binary_cross_entropy", "label": "Binary Cross Entropy" },
+          { "value": "hinge", "label": "Hinge Loss" }
+        ],
+        "defaultValue": "cross_entropy"
+      },
+      {
+        "type": "checkbox",
+        "id": "reduction",
+        "label": "Use Reduction",
+        "defaultValue": true
+      }
+    ]
+  },
+  {
+    "id": "optimizer",
+    "name": "Optimizer",
+    "category": "optim",
+    "color": "#F44336",
+    "inputs": [],
+    "outputs": [
+      {
+        "id": "optimizer_out",
+        "name": "Optimizer",
+        "type": "optimizer"
+      }
+    ],
+    "fields": [
+      {
+        "type": "select",
+        "id": "optimizer-type",
+        "label": "Type",
+        "options": [
+          { "value": "sgd", "label": "Stochastic Gradient Descent" },
+          { "value": "adam", "label": "Adam" },
+          { "value": "rmsprop", "label": "RMSprop" },
+          { "value": "adagrad", "label": "Adagrad" }
+        ],
+        "defaultValue": "adam"
+      },
+      {
+        "type": "number",
+        "id": "learning-rate",
+        "label": "Learning Rate",
+        "defaultValue": 0.001,
+        "props": {
+          "min": 0.0001,
+          "max": 0.1,
+          "step": 0.0001
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "use-momentum",
+        "label": "Use Momentum",
+        "defaultValue": true
+      },
+      {
+        "type": "number",
+        "id": "momentum",
+        "label": "Momentum",
+        "defaultValue": 0.9,
+        "props": {
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        }
+      }
+    ]
+  },
+  {
+    "id": "trainer",
+    "name": "Model Trainer",
+    "category": "optim",
+    "color": "#F44336",
+    "inputs": [
+      {
+        "id": "model_in",
+        "name": "Model Output",
+        "type": "tensor"
+      },
+      {
+        "id": "test_data_in",
+        "name": "Test Data",
+        "type": "tensor"
+      },
+      {
+        "id": "validation_data_in",
+        "name": "Validation Data",
+        "type": "tensor"
+      },
+      {
+        "id": "labels_in",
+        "name": "Labelled Data",
+        "type": "tensor"
+      },
+      {
+        "id": "loss_in",
+        "name": "Loss Function",
+        "type": "loss"
+      },
+      {
+        "id": "optimizer_in",
+        "name": "Optimizer",
+        "type": "optimizer"
+      }
+    ],
+    "outputs": [],
+    "fields": [
+      {
+        "type": "number",
+        "id": "epochs",
+        "label": "Epochs",
+        "defaultValue": 10,
+        "props": {
+          "min": 1,
+          "max": 1000,
+          "step": 1
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "early-stopping",
+        "label": "Use Early Stopping",
+        "defaultValue": true
+      },
+      {
+        "type": "number",
+        "id": "patience",
+        "label": "Patience",
+        "defaultValue": 3,
+        "props": {
+          "min": 1,
+          "max": 50,
+          "step": 1
+        }
+      },
+      {
+        "type": "button",
+        "id": "train-model",
+        "label": "Train Model"
+      },
+      {
+        "type": "display",
+        "id": "training-status",
+        "label": "Training Status"
+      }
+    ]
+  },
+  {
+    "id": "flatten-layer",
+    "name": "Flatten Layer",
+    "category": "neural",
+    "color": "#9C27B0",
+    "inputs": [
+      {
+        "id": "data_in",
+        "name": "Input",
+        "type": "tensor"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "data_out",
+        "name": "Output",
+        "type": "tensor"
+      }
+    ],
+    "fields": []
+  },
+  {
+    "id": "dropout-layer",
+    "name": "Dropout Layer",
+    "category": "neural",
+    "color": "#9C27B0",
+    "inputs": [
+      {
+        "id": "data_in",
+        "name": "Input",
+        "type": "tensor"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "data_out",
+        "name": "Output",
+        "type": "tensor"
+      }
+    ],
+    "fields": [
+      {
+        "type": "number",
+        "id": "dropout-rate",
+        "label": "Dropout Rate",
+        "defaultValue": 0.5,
+        "props": {
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      }
+    ]
+  },
+  {
+    "id": "batch-norm",
+    "name": "Batch Normalization",
+    "category": "neural",
+    "color": "#9C27B0",
+    "inputs": [
+      {
+        "id": "data_in",
+        "name": "Input",
+        "type": "tensor"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "data_out",
+        "name": "Output",
+        "type": "tensor"
+      }
+    ],
+    "fields": [
+      {
+        "type": "checkbox",
+        "id": "affine",
+        "label": "Affine Transform",
+        "defaultValue": true
+      },
+      {
+        "type": "number",
+        "id": "momentum",
+        "label": "Momentum",
+        "defaultValue": 0.1,
+        "props": {
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        }
+      }
+    ]
+  },
+  {
+    "id": "pooling-kernel",
+    "name": "Pooling Kernel",
+    "category": "properties",
+    "color": "#FF9800",
+    "inputs": [],
+    "outputs": [
+      {
+        "id": "kernel_out",
+        "name": "Kernel",
+        "type": "kernel"
+      }
+    ],
+    "fields": [
+      {
+        "type": "number",
+        "id": "pool-size",
+        "label": "Pool Size",
+        "defaultValue": 2,
+        "props": {
+          "min": 1,
+          "max": 8,
+          "step": 1
+        }
+      },
+      {
+        "type": "number",
+        "id": "pool-stride",
+        "label": "Stride",
+        "defaultValue": 2,
+        "props": {
+          "min": 1,
+          "max": 8,
+          "step": 1
+        }
+      }
+    ]
   }
 ]

@@ -309,13 +309,26 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
   };
   
   // Get connection type color
-  const getConnectionColor = (sourceType: string | string[], targetType: string | string[]) => {
+  const getConnectionColor = (sourceType: string | string[], targetType: string | string[], sourceElement: HTMLElement | null) => {
+    // Try to use the color from the node itself if available
+    if (sourceElement) {
+      const nodeColor = sourceElement.getAttribute('data-node-color');
+      if (nodeColor) return nodeColor;
+    }
+    
+    // Fallback to type-based coloring
     const sourceTypeStr = Array.isArray(sourceType) ? sourceType[0] : sourceType;
     
     switch(sourceTypeStr) {
       case 'text': return 'var(--color-primary)';
       case 'image': return 'var(--color-secondary)';
       case 'number': return 'var(--color-error)';
+      case 'tensor': return '#9C27B0';
+      case 'kernel': return '#FF9800';
+      case 'activation': return '#00BCD4';
+      case 'loss': return '#F44336';
+      case 'optimizer': return '#F44336';
+      case 'fc_property': return '#FF9800';
       default: return 'var(--color-text-secondary)';
     }
   };
@@ -332,17 +345,22 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
         {/* Fixed background layer for connections */}
         <g className="connections-container">
           {/* Draw actual connections in screen coordinates */}
-          {connections.map(conn => (
-            <path
-              key={conn.id}
-              data-connection-id={conn.id}
-              className="connection-line"
-              d="M0,0 C0,0 0,0 0,0" // Placeholder path to be updated by the animation frame
-              stroke={getConnectionColor(conn.sourceType, conn.targetType)}
-              strokeWidth={2} 
-              fill="none"
-            />
-          ))}
+          {connections.map(conn => {
+            const nodes = connectionNodesRef.current.get(conn.id);
+            const sourceElement = nodes?.sourceElement;
+            
+            return (
+              <path
+                key={conn.id}
+                data-connection-id={conn.id}
+                className="connection-line"
+                d="M0,0 C0,0 0,0 0,0" // Placeholder path to be updated by the animation frame
+                stroke={getConnectionColor(conn.sourceType, conn.targetType, sourceElement)}
+                strokeWidth={2} 
+                fill="none"
+              />
+            );
+          })}
 
           {/* Preview line in screen coordinates */}
           {previewLine && (

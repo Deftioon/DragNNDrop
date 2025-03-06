@@ -11,12 +11,14 @@ interface ConnectionNodeProps {
   data: ConnectionNodeData;
   nodeType: 'input' | 'output';
   instanceId: string;
+  color?: string; // Add color prop
 }
 
 const ConnectionNode: React.FC<ConnectionNodeProps> = ({ 
   data, 
   nodeType,
-  instanceId 
+  instanceId,
+  color // Accept color from parent
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   
@@ -30,6 +32,12 @@ const ConnectionNode: React.FC<ConnectionNodeProps> = ({
 
   const dataType = Array.isArray(data.type) ? data.type.join(',') : data.type;
 
+  // Style override for this specific node
+  const nodeStyle = color ? {
+    backgroundColor: isHovered ? color : `${color}99`, // Make it slightly transparent when not hovered
+    borderColor: color
+  } : undefined;
+
   return (
     <div 
       className={`connection-node ${nodeType}-node`}
@@ -42,6 +50,8 @@ const ConnectionNode: React.FC<ConnectionNodeProps> = ({
         data-instance-id={instanceId}
         data-node-type={nodeType}
         data-node-data-type={dataType}
+        data-node-color={color} // Add color as data attribute
+        style={nodeStyle}
         title={data.name}
       />
       {isHovered && (

@@ -21,9 +21,8 @@
   height: 12px;
   border-radius: 50%;
   cursor: pointer;
-  transition: transform 0.15s ease-out;
-  z-index: 10;
-  /* Remove border and use pure colors */
+  transition: transform 0.15s ease-out, background-color 0.15s ease;
+  z-index: 25; /* Higher z-index to appear above lines */
   border: none;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
@@ -53,20 +52,55 @@
   left: 24px;
 }
 
-/* Specific styling based on data types - using pure colors */
-.node-point[data-node-data-type="text"] {
+/* Default colors for nodes without custom colors */
+.node-point:not([style]) {
+  background-color: var(--color-bg-node, #f0f0f0);
+  border: 2px solid var(--color-border-node, #999);
+}
+
+.node-point:not([style]):hover {
+  background-color: var(--color-bg-node-hover, #e0e0e0);
+  border-color: var(--color-primary, #5c67f2);
+}
+
+/* Specific styling based on data types - only used if custom color not provided */
+.node-point:not([style])[data-node-data-type="text"] {
   background-color: #2196F3;
 }
 
-.node-point[data-node-data-type="image"] {
+.node-point:not([style])[data-node-data-type="image"] {
   background-color: #4CAF50;
 }
 
-.node-point[data-node-data-type="number"] {
+.node-point:not([style])[data-node-data-type="number"] {
   background-color: #00BCD4;
 }
 
+.node-point:not([style])[data-node-data-type="tensor"] {
+  background-color: #9C27B0;
+}
+
+.node-point:not([style])[data-node-data-type="kernel"] {
+  background-color: #FF9800;
+}
+
+.node-point:not([style])[data-node-data-type="activation"] {
+  background-color: #00BCD4;
+}
+
+.node-point:not([style])[data-node-data-type="loss"] {
+  background-color: #F44336;
+}
+
+.node-point:not([style])[data-node-data-type="optimizer"] {
+  background-color: #F44336;
+}
+
+.node-point:not([style])[data-node-data-type="fc_property"] {
+  background-color: #FF9800;
+}
+
 /* For nodes that accept multiple types */
-.node-point[data-node-data-type="text,image,number"] {
+.node-point:not([style])[data-node-data-type*=","] {
   background-color: #9C27B0;
 }

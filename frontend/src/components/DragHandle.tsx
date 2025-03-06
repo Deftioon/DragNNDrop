@@ -4,9 +4,14 @@ import './DragHandle.css';
 interface DragHandleProps {
   instanceId: string;
   onMoveComponent: (id: string, position: { x: number; y: number }) => void;
+  onDeleteComponent?: (id: string) => void; // Add new prop for deletion
 }
 
-const DragHandle: React.FC<DragHandleProps> = ({ instanceId, onMoveComponent }) => {
+const DragHandle: React.FC<DragHandleProps> = ({ 
+  instanceId, 
+  onMoveComponent,
+  onDeleteComponent
+}) => {
   const [isDragging, setIsDragging] = useState(false);
   const dragStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const componentInitialPosRef = useRef<{ x: number; y: number } | null>(null);
@@ -127,6 +132,19 @@ const DragHandle: React.FC<DragHandleProps> = ({ instanceId, onMoveComponent }) 
       componentInitialPosRef.current = null;
     }
   };
+
+  // Handle right click to delete component
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (onDeleteComponent) {
+      const confirmDelete = window.confirm('Are you sure you want to delete this component?');
+      if (confirmDelete) {
+        onDeleteComponent(instanceId);
+      }
+    }
+  };
   
   return (
     <div 
@@ -143,6 +161,8 @@ const DragHandle: React.FC<DragHandleProps> = ({ instanceId, onMoveComponent }) 
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerCancel}
       onLostPointerCapture={handlePointerCancel}
+      onContextMenu={handleContextMenu} // Add context menu handler
+      title="Drag to move, right-click to delete" // Add helpful tooltip
     >
       <div className="drag-handle-dots">
         <div className="drag-handle-dot"></div>

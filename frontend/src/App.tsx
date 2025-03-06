@@ -1,3 +1,5 @@
+// TODO: IMPORTING JSON DOES NOT FULLY WORK, FIELDS ARE NOT COPIED OVER.
+
 import { useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -30,7 +32,6 @@ export interface DroppedComponent extends ComponentData {
 }
 
 function AppContent() {
-  const { toggleTheme, theme } = useTheme();
   const [droppedComponents, setDroppedComponents] = useState<DroppedComponent[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
 
@@ -153,6 +154,17 @@ function AppContent() {
     }
   };
 
+  // Handle component deletion
+  const handleDeleteComponent = (instanceId: string) => {
+    // Remove the component
+    setDroppedComponents(prev => prev.filter(comp => comp.instanceId !== instanceId));
+    
+    // Also remove any connections to/from this component
+    setConnections(prev => prev.filter(conn => 
+      conn.sourceComponentId !== instanceId && conn.targetComponentId !== instanceId
+    ));
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="app-container">
@@ -164,19 +176,22 @@ function AppContent() {
         />
         <div className="workspace">
           <Sidebar components={componentsData as ComponentData[]} />
-          <DropArea
-            components={droppedComponents}
-            onDrop={handleDrop}
-            onMoveComponent={handleMoveComponent}
-            onComponentStateChange={handleComponentStateChange}
-            onViewportChange={handleViewportChange}
-          />
-          <ConnectionManager
-            connections={connections}
-            onCreateConnection={handleCreateConnection}
-            onDeleteConnection={handleDeleteConnection}
-            viewportTransform={viewport}
-          />
+          <div className="drop-area-container">
+            <DropArea
+              components={droppedComponents}
+              onDrop={handleDrop}
+              onMoveComponent={handleMoveComponent}
+              onComponentStateChange={handleComponentStateChange}
+              onViewportChange={handleViewportChange}
+              onDeleteComponent={handleDeleteComponent} // Pass the delete handler
+            />
+            <ConnectionManager
+              connections={connections}
+              onCreateConnection={handleCreateConnection}
+              onDeleteConnection={handleDeleteConnection}
+              viewportTransform={viewport}
+            />
+          </div>
         </div>
       </div>
     </DndProvider>

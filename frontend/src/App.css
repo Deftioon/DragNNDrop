@@ -71,7 +71,13 @@ body {
 .workspace {
   display: flex;
   flex: 1;
-  height: 100vh; /* Changed from calc(100vh - 50px) since we don't have the header anymore */
+  height: calc(100vh - 40px); /* Adjusting for the FloatingMenu */
+  overflow: hidden;
+}
+
+.drop-area-container {
+  position: relative;
+  flex: 1;
   overflow: hidden;
 }
 

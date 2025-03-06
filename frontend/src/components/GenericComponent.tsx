@@ -157,6 +157,7 @@ const GenericComponent: React.FC<GenericComponentProps> = ({
                 data={inputData}
                 nodeType="input"
                 instanceId={componentId}
+                color={style?.borderLeftColor as string} // Pass component color to connection node
               />
             ))}
           </div>
@@ -179,6 +180,7 @@ const GenericComponent: React.FC<GenericComponentProps> = ({
                 data={outputData}
                 nodeType="output"
                 instanceId={componentId}
+                color={style?.borderLeftColor as string} // Pass component color to connection node
               />
             ))}
           </div>

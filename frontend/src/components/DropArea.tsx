@@ -11,6 +11,7 @@ interface DropAreaProps {
   onMoveComponent: (id: string, position: { x: number; y: number }) => void;
   onComponentStateChange: (instanceId: string, fieldId: string, value: any) => void;
   onViewportChange?: (viewport: { scale: number; translateX: number; translateY: number }) => void;
+  onDeleteComponent?: (id: string) => void; // Add new prop
 }
 
 interface DragItem {
@@ -40,6 +41,7 @@ const DropArea: FC<DropAreaProps> = ({
   onMoveComponent,
   onComponentStateChange,
   onViewportChange,
+  onDeleteComponent, // Add new prop
 }) => {
   const dropRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -394,6 +396,13 @@ const DropArea: FC<DropAreaProps> = ({
     onMoveComponent(instanceId, position);
   };
 
+  // Handle component deletion
+  const handleComponentDelete = (instanceId: string) => {
+    if (onDeleteComponent) {
+      onDeleteComponent(instanceId);
+    }
+  };
+
   // Handle field value changes
   const handleFieldChange = (instanceId: string, fieldId: string, value: any) => {
     onComponentStateChange(instanceId, fieldId, value);
@@ -475,6 +484,7 @@ const DropArea: FC<DropAreaProps> = ({
               <DragHandle 
                 instanceId={component.instanceId}
                 onMoveComponent={handleComponentMove}
+                onDeleteComponent={handleComponentDelete} // Pass the delete handler
               />
               {renderComponent(component)}
             </div>

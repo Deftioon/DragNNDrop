@@ -26,6 +26,31 @@
   background-color: #d0d0d0;
 }
 
+/* Add hover effect to indicate right-click functionality */
+.drag-handle:hover::before {
+  content: '×';
+  position: absolute;
+  top: -9px;
+  right: -9px;
+  width: 16px;
+  height: 16px;
+  background-color: #ff5757;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.drag-handle:hover::before {
+  opacity: 0.8;
+}
+
 .drag-handle-dots {
   display: flex;
   flex-direction: column;

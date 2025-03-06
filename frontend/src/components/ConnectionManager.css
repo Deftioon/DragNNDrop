@@ -5,8 +5,9 @@
   width: 100%;
   height: 100%;
   pointer-events: none; /* Allow events to pass through to components underneath */
-  z-index: 5; /* Lower z-index so components appear above */
+  z-index: 20; /* Lower z-index so components appear above */
   will-change: transform; /* Hint to browser for optimization */
+  overflow: hidden; /* Prevent content from spilling outside */
 }
 
 .connections-svg {
@@ -36,7 +37,8 @@
 /* Make the hover effect more noticeable at all zoom levels */
 .connection-line:hover {
   stroke-opacity: 0.8;
-  filter: drop-shadow(0 0 2px var(--color-primary));
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.3));
+  stroke-width: 3;
 }
 
 .preview-connection-line {
