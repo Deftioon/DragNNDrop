@@ -4,8 +4,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  z-index: 50;
+  pointer-events: none; /* Allow events to pass through to components underneath */
+  z-index: 5; /* Lower z-index so components appear above */
   will-change: transform; /* Hint to browser for optimization */
 }
 
@@ -21,11 +21,12 @@
 
 .connections-container {
   will-change: transform;
+  pointer-events: none;
 }
 
 /* Update hover styles for better visibility */
 .connection-line {
-  pointer-events: all;
+  pointer-events: auto; /* Enable pointer events on the lines themselves */
   cursor: pointer;
   /* Remove transition for more immediate feedback */
   stroke-linecap: round;

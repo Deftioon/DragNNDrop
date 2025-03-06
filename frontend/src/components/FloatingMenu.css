@@ -9,8 +9,8 @@
 .floating-badge {
   display: flex;
   align-items: center;
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
+  background-color: var(--color-bg-floating);
+  color: var(--color-text-primary);
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 15px;
@@ -19,17 +19,18 @@
   cursor: pointer;
   user-select: none;
   transition: box-shadow 0.2s, transform 0.1s, background-color 0.2s;
+  border: 1px solid var(--color-border);
 }
 
 .floating-badge:hover {
   box-shadow: 0 5px 15px var(--color-shadow);
   transform: translateY(-1px);
-  background-color: var(--color-primary-hover);
+  background-color: var(--color-bg-button-hover);
 }
 
 .floating-badge:active {
   transform: translateY(0);
-  background-color: var(--color-primary-active);
+  background-color: var(--color-bg-button-active);
 }
 
 .badge-title {
@@ -46,26 +47,26 @@
   top: calc(100% + 5px);
   right: 0;
   width: 220px;
-  background-color: var(--color-bg-floating, white);
-  color: var(--color-text-primary, #333);
+  background-color: var(--color-bg-floating);
+  color: var(--color-text-primary);
   border-radius: 8px;
-  box-shadow: 0 5px 20px var(--color-shadow, rgba(0, 0, 0, 0.25));
+  box-shadow: 0 5px 20px var(--color-shadow);
   overflow: hidden;
   animation: slide-down 0.15s ease-out;
-  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--color-border);
 }
 
 .menu-item {
   padding: 12px 16px;
   display: flex;
   align-items: center;
-  color: var(--color-text-primary, #333);
+  color: var(--color-text-primary);
   cursor: pointer;
   transition: background-color 0.15s;
 }
 
 .menu-item:hover {
-  background-color: var(--color-bg-button-hover, #f5f5f5);
+  background-color: var(--color-bg-button-hover);
 }
 
 .menu-icon {
@@ -93,7 +94,7 @@
 
 /* Add styles for the export dialog */
 
-.export-dialog {
+.export-dialog, .import-dialog {
   position: absolute;
   top: calc(100% + 5px);
   right: 0;
@@ -175,8 +176,12 @@
   color: var(--color-on-primary);
 }
 
-.export-button:hover:not(:disabled) {
+.export-button:hover:not(:disabled), .import-button:hover:not(:disabled) {
   background-color: var(--color-primary-hover);
+}
+
+.export-button:active:not(:disabled), .import-button:active:not(:disabled) {
+  background-color: var(--color-primary-active);
 }
 
 .export-button:disabled {
@@ -188,6 +193,12 @@
   background-color: transparent;
   border: 1px solid var(--color-border);
   color: var(--color-text-primary);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
 
 .cancel-button:hover {
@@ -195,20 +206,6 @@
 }
 
 /* Add styles for the import dialog */
-
-.import-dialog {
-  position: absolute;
-  top: calc(100% + 5px);
-  right: 0;
-  width: 280px;
-  background-color: var(--color-bg-floating);
-  border-radius: 8px;
-  box-shadow: 0 5px 20px var(--color-shadow);
-  padding: 16px;
-  animation: slide-down 0.15s ease-out;
-  z-index: 1000;
-  border: 1px solid var(--color-border);
-}
 
 .import-dialog h3 {
   margin: 0 0 12px 0;

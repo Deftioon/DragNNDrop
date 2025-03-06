@@ -147,8 +147,8 @@
     "color": "#F44336",
     "inputs": [
       {
-        "id": "data_in",
-        "name": "Data Input",
+        "id": "data_in_1",
+        "name": "Data Input 1",
         "type": ["text", "image", "number"]
       }
     ],

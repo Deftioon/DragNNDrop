@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import ContextMenu from './ContextMenu';
 import './ConnectionManager.css';
 
 export interface Connection {
@@ -16,12 +15,14 @@ interface ConnectionManagerProps {
   connections: Connection[];
   onCreateConnection: (connection: Omit<Connection, 'id'>) => void;
   onDeleteConnection: (connectionId: string) => void;
+  viewportTransform?: { scale: number; translateX: number; translateY: number };
 }
 
 const ConnectionManager: React.FC<ConnectionManagerProps> = ({
   connections,
   onCreateConnection,
   onDeleteConnection,
+  viewportTransform = { scale: 1, translateX: 0, translateY: 0 }
 }) => {
   const [startNode, setStartNode] = useState<{
     componentId: string;
@@ -38,18 +39,13 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
     y2: number;
   } | null>(null);
   
-  const [contextMenu, setContextMenu] = useState<{
-    x: number;
-    y: number;
-    connectionId: string;
-  } | null>(null);
-  
   const svgRef = useRef<SVGSVGElement>(null);
   const connectionNodesRef = useRef<Map<string, {
     sourceElement: HTMLElement | null;
     targetElement: HTMLElement | null;
   }>>(new Map());
   
+  // Setup event listeners for node click and mousemove
   useEffect(() => {
     const handleNodeClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -62,19 +58,23 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
       
       if (!componentId || !nodeId || !nodeType || !dataType) return;
       
+      // If we already have a start node
       if (startNode) {
+        // Don't connect to the same node
         if (startNode.componentId === componentId && startNode.nodeId === nodeId) {
           setStartNode(null);
           setPreviewLine(null);
           return;
         }
         
+        // Don't connect input to input or output to output
         if (startNode.nodeType === nodeType) {
           setStartNode(null);
           setPreviewLine(null);
           return;
         }
         
+        // Determine source (output) and target (input) nodes
         let source, target;
         if (startNode.nodeType === 'output') {
           source = {
@@ -100,6 +100,7 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
           };
         }
         
+        // Check compatibility
         const sourceType = Array.isArray(source.dataType) ? source.dataType : [source.dataType];
         const targetType = Array.isArray(target.dataType) ? target.dataType : [target.dataType];
         
@@ -110,6 +111,7 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
         );
         
         if (isCompatible) {
+          // Create the connection
           onCreateConnection({
             sourceComponentId: source.componentId,
             sourceNodeId: source.nodeId,
@@ -120,9 +122,11 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
           });
         }
         
+        // Reset state
         setStartNode(null);
         setPreviewLine(null);
       } else {
+        // Start new connection using screen coordinates
         setStartNode({
           componentId,
           nodeId,
@@ -131,12 +135,15 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
           element: target
         });
         
+        // Get position in screen coordinates
         const rect = target.getBoundingClientRect();
         const svgRect = svgRef.current!.getBoundingClientRect();
         
+        // Calculate center of node in SVG coordinates
         const svgX = rect.left + rect.width / 2 - svgRect.left;
         const svgY = rect.top + rect.height / 2 - svgRect.top;
         
+        // Set preview line with screen coordinates
         setPreviewLine({
           x1: svgX,
           y1: svgY,
@@ -149,11 +156,14 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
     const handleMouseMove = (e: MouseEvent) => {
       if (!startNode || !previewLine || !svgRef.current) return;
       
+      // Get SVG coordinates
       const svgRect = svgRef.current.getBoundingClientRect();
       
+      // Get mouse position relative to SVG (in screen coordinates)
       const svgMouseX = e.clientX - svgRect.left;
       const svgMouseY = e.clientY - svgRect.top;
       
+      // Update the preview line directly in screen coordinates
       setPreviewLine(prev => ({
         ...prev!,
         x2: svgMouseX,
@@ -164,19 +174,15 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
     const handleConnectionRightClick = (e: MouseEvent) => {
       const target = e.target as SVGElement;
       
+      // Check if right-clicked on a connection
       if (target.tagName === 'path' && target.classList.contains('connection-line')) {
         e.preventDefault();
         
         const connectionId = target.getAttribute('data-connection-id');
         if (connectionId) {
-          setContextMenu({
-            x: e.clientX,
-            y: e.clientY,
-            connectionId
-          });
+          // Delete the connection immediately without showing a context menu
+          onDeleteConnection(connectionId);
         }
-      } else {
-        setContextMenu(null);
       }
     };
     
@@ -198,9 +204,11 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
       document.removeEventListener('contextmenu', handleConnectionRightClick);
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [startNode, previewLine, onCreateConnection]);
+  }, [startNode, previewLine, onCreateConnection, onDeleteConnection]);
   
+  // Optimize connection position tracking
   const findNodeElements = useCallback(() => {
+    // Find and store all node elements once
     connections.forEach(conn => {
       const sourceNode = document.querySelector(
         `[data-instance-id="${conn.sourceComponentId}"][data-node-id="${conn.sourceNodeId}"]`
@@ -220,52 +228,65 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
   useEffect(() => {
     findNodeElements();
     
+    // Use ResizeObserver instead of MutationObserver to detect position changes
     const resizeObserver = new ResizeObserver(() => {
+      // Nodes moved, request animation frame for smooth rendering
       requestAnimationFrame(updateConnectionPositions);
     });
     
+    // Observe the parent container rather than the entire document
     const container = document.querySelector('.drop-area');
     if (container) {
       resizeObserver.observe(container);
     }
     
+    // Cleanup
     return () => {
       resizeObserver.disconnect();
     };
   }, [connections, findNodeElements]);
   
+  // Update connection positions - fixed to handle screen coordinates correctly
   const updateConnectionPositions = useCallback(() => {
     if (!svgRef.current) return;
     
     const svgRect = svgRef.current.getBoundingClientRect();
     
+    // Update each connection line
     connectionNodesRef.current.forEach((nodes, connId) => {
       if (!nodes.sourceElement || !nodes.targetElement) return;
       
+      // Get node positions in screen coordinates
       const sourceRect = nodes.sourceElement.getBoundingClientRect();
       const targetRect = nodes.targetElement.getBoundingClientRect();
       
+      // Calculate node centers in client (screen) coordinates
       const sourceX = sourceRect.left + sourceRect.width / 2;
       const sourceY = sourceRect.top + sourceRect.height / 2;
       const targetX = targetRect.left + targetRect.width / 2;
       const targetY = targetRect.top + targetRect.height / 2;
       
+      // Convert to SVG coordinates (relative to the SVG element)
       const svgSourceX = sourceX - svgRect.left;
       const svgSourceY = sourceY - svgRect.top;
       const svgTargetX = targetX - svgRect.left;
       const svgTargetY = targetY - svgRect.top;
       
+      // Calculate bezier control points
       const dx = Math.abs(svgTargetX - svgSourceX) * 0.5;
       
+      // Generate path using screen coordinates
       const pathData = `M${svgSourceX},${svgSourceY} C${svgSourceX + dx},${svgSourceY} ${svgTargetX - dx},${svgTargetY} ${svgTargetX},${svgTargetY}`;
       
+      // Find and update the path
       const path = document.querySelector(`[data-connection-id="${connId}"]`);
       if (path) {
         (path as SVGPathElement).setAttribute('d', pathData);
       }
     });
-  }, []);
+  }, []); // No dependencies needed as we calculate everything fresh each time
   
+  // Use requestAnimationFrame for smooth rendering
   useEffect(() => {
     let animationFrameId: number;
     
@@ -281,23 +302,14 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
     };
   }, [updateConnectionPositions]);
   
+  // Generate bezier control points for smooth curves
   const generateBezierPath = (x1: number, y1: number, x2: number, y2: number) => {
     const dx = Math.abs(x2 - x1) * 0.5;
     return `M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`;
   };
   
-  const handleCloseContextMenu = () => {
-    setContextMenu(null);
-  };
-  
-  const handleDeleteConnection = () => {
-    if (contextMenu) {
-      onDeleteConnection(contextMenu.connectionId);
-      setContextMenu(null);
-    }
-  };
-  
-  const getConnectionColor = (sourceType: string | string[]) => {
+  // Get connection type color
+  const getConnectionColor = (sourceType: string | string[], targetType: string | string[]) => {
     const sourceTypeStr = Array.isArray(sourceType) ? sourceType[0] : sourceType;
     
     switch(sourceTypeStr) {
@@ -317,19 +329,22 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
         height="100%"
         preserveAspectRatio="none"
       >
+        {/* Fixed background layer for connections */}
         <g className="connections-container">
+          {/* Draw actual connections in screen coordinates */}
           {connections.map(conn => (
             <path
               key={conn.id}
               data-connection-id={conn.id}
               className="connection-line"
-              d="M0,0 C0,0 0,0 0,0"
-              stroke={getConnectionColor(conn.sourceType)}
+              d="M0,0 C0,0 0,0 0,0" // Placeholder path to be updated by the animation frame
+              stroke={getConnectionColor(conn.sourceType, conn.targetType)}
               strokeWidth={2} 
               fill="none"
             />
           ))}
 
+          {/* Preview line in screen coordinates */}
           {previewLine && (
             <path
               className="preview-connection-line"
@@ -347,15 +362,6 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
           )}
         </g>
       </svg>
-      
-      {contextMenu && (
-        <ContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          onClose={handleCloseContextMenu}
-          onDelete={handleDeleteConnection}
-        />
-      )}
     </div>
   );
 };

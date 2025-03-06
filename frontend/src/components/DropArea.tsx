@@ -465,6 +465,7 @@ const DropArea: FC<DropAreaProps> = ({
             <div
               key={component.instanceId}
               className="dropped-component"
+              data-instance-id={component.instanceId}
               style={{
                 position: "absolute",
                 left: `${component.position.x}px`,

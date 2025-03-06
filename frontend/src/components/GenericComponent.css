@@ -165,3 +165,19 @@
 .number-input .number-field label {
   color: var(--color-primary, #00BCD4);
 }
+
+/* Update z-index for component elements */
+
+.component-container {
+  z-index: 10; /* Ensure component content is above connection lines */
+  position: relative;
+  /* ...existing styles... */
+}
+
+/* Make node points always visible above connections */
+.node-point {
+  z-index: 15; /* Higher than components and connections */
+  /* ...existing styles... */
+}
+
+/* ...existing styles... */

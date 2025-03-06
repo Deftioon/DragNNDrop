@@ -55,11 +55,10 @@
 
 .dropped-component {
   position: absolute;
-  z-index: 10;
+  z-index: 10; /* Higher z-index to appear above connections */
   transition: transform 0.1s;
 }
 
-/* Removed the component-wrapper styles that created the box */
 .component-wrapper {
   position: relative;
   min-width: 180px;

@@ -12,99 +12,68 @@ const DragHandle: React.FC<DragHandleProps> = ({ instanceId, onMoveComponent }) 
   const componentInitialPosRef = useRef<{ x: number; y: number } | null>(null);
   const handleRef = useRef<HTMLDivElement>(null);
   
-  // Debug logging function
-  const logDebug = (message: string, data?: any) => {
-    if (data) {
-      console.log(`[DragHandle ${instanceId}] ${message}`, data);
-    } else {
-      console.log(`[DragHandle ${instanceId}] ${message}`);
-    }
-  };
-  
   // Get parent component (for position calculation)
   const getParentComponent = () => {
     if (!handleRef.current) return null;
     
-    // First go up to component-wrapper, then to dropped-component
-    const componentWrapper = handleRef.current.parentElement;
-    if (!componentWrapper) {
-      logDebug('No component wrapper parent found');
-      return null;
-    }
-    
-    const droppedComponent = componentWrapper.parentElement;
-    if (!droppedComponent) {
-      logDebug('No dropped component parent found');
-      return null;
-    }
-    
-    logDebug('Found parent component', droppedComponent);
-    return droppedComponent;
+    // Get the closest parent with class "dropped-component"
+    const droppedComponent = handleRef.current.closest('.dropped-component');
+    return droppedComponent as HTMLElement;
   };
 
   // Add ref to find canvas scale
   const getCanvasScale = () => {
-    // Look for the canvas element with transform
     const canvas = document.querySelector(".canvas") as HTMLElement;
     if (!canvas) return 1;
     
-    // Extract scale from transform matrix
     const transform = window.getComputedStyle(canvas).transform;
     if (transform === 'none') return 1;
     
-    // Parse the transform matrix values
     const matrix = transform.match(/^matrix\((.+)\)$/);
     if (matrix) {
       const values = matrix[1].split(', ');
-      // The scale is in position 0
       return parseFloat(values[0]);
     }
     
     return 1;
   };
 
-  // Handle mouse down to start dragging
-  const handleMouseDown = (e: React.MouseEvent) => {
+  // Handle pointer events for better cross-device support
+  const handlePointerDown = (e: React.PointerEvent) => {
+    // Capture the pointer to ensure we get all events even if pointer leaves the element
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    
     e.preventDefault();
     e.stopPropagation();
     
-    logDebug('Mouse down event received', { x: e.clientX, y: e.clientY });
-    
     const parentComponent = getParentComponent();
-    if (!parentComponent) {
-      logDebug('Could not find parent component');
+    if (!parentComponent) return;
+    
+    // Verify we're working with the correct component
+    if (parentComponent.dataset.instanceId !== instanceId) {
+      console.error(`DragHandle mismatch: Expected ${instanceId}, got ${parentComponent.dataset.instanceId}`);
       return;
     }
     
-    // No need to get scale if not using it
-    // const scale = getCanvasScale();
+    setIsDragging(true);
     
-    if (parentComponent) {
-      setIsDragging(true);
-      
-      // Store initial positions, accounting for scale
-      dragStartPosRef.current = { x: e.clientX, y: e.clientY };
-      
-      // Get current component position
-      const currentLeft = parseInt(parentComponent.style.left || '0', 10);
-      const currentTop = parseInt(parentComponent.style.top || '0', 10);
-      componentInitialPosRef.current = { x: currentLeft, y: currentTop };
-      
-      // Add global mouse event listeners
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    }
+    // Store initial positions
+    dragStartPosRef.current = { x: e.clientX, y: e.clientY };
+    
+    // Get current component position
+    const currentLeft = parseInt(parentComponent.style.left || '0', 10);
+    const currentTop = parseInt(parentComponent.style.top || '0', 10);
+    componentInitialPosRef.current = { x: currentLeft, y: currentTop };
   };
 
-  // Handle mouse move during drag
-  const handleMouseMove = (e: MouseEvent) => {
+  const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDragging || !dragStartPosRef.current || !componentInitialPosRef.current) return;
     
-    // Prevent default to avoid text selection
     e.preventDefault();
+    e.stopPropagation();
     
     const parentComponent = getParentComponent();
-    if (!parentComponent) return;
+    if (!parentComponent || parentComponent.dataset.instanceId !== instanceId) return;
     
     const scale = getCanvasScale();
     
@@ -119,52 +88,46 @@ const DragHandle: React.FC<DragHandleProps> = ({ instanceId, onMoveComponent }) 
     // Update component position visually
     parentComponent.style.left = `${newX}px`;
     parentComponent.style.top = `${newY}px`;
-    
-    if (e.buttons !== 1) {
-      // Mouse button released outside of window
-      handleMouseUp(e);
-    }
   };
 
-  // Handle mouse up to end dragging
-  const handleMouseUp = (e: MouseEvent) => {
-    if (isDragging && componentInitialPosRef.current && dragStartPosRef.current) {
-      logDebug('Mouse up - ending drag');
-      
-      const scale = getCanvasScale();
-      
-      // Calculate delta with scale adjustment
-      const dx = (e.clientX - dragStartPosRef.current.x) / scale;
-      const dy = (e.clientY - dragStartPosRef.current.y) / scale;
-      
-      // Calculate final position
-      const finalX = componentInitialPosRef.current.x + dx;
-      const finalY = componentInitialPosRef.current.y + dy;
-      
-      logDebug('Final position', { x: finalX, y: finalY });
-      
-      // Update component position through props
-      onMoveComponent(instanceId, { x: finalX, y: finalY });
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (e.target instanceof HTMLElement) {
+      e.target.releasePointerCapture(e.pointerId);
     }
+    
+    if (!isDragging || !dragStartPosRef.current || !componentInitialPosRef.current) return;
+    
+    const parentComponent = getParentComponent();
+    if (!parentComponent || parentComponent.dataset.instanceId !== instanceId) return;
+    
+    const scale = getCanvasScale();
+    
+    // Calculate delta with scale adjustment
+    const dx = (e.clientX - dragStartPosRef.current.x) / scale;
+    const dy = (e.clientY - dragStartPosRef.current.y) / scale;
+    
+    // Calculate final position
+    const finalX = componentInitialPosRef.current.x + dx;
+    const finalY = componentInitialPosRef.current.y + dy;
+    
+    // Update component position through props
+    onMoveComponent(instanceId, { x: finalX, y: finalY });
     
     // Clean up
     setIsDragging(false);
     dragStartPosRef.current = null;
     componentInitialPosRef.current = null;
-    
-    // Remove global event listeners
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  // Add a fallback for pointer cancel/leave events
+  const handlePointerCancel = (e: React.PointerEvent) => {
+    if (isDragging) {
+      setIsDragging(false);
+      dragStartPosRef.current = null;
+      componentInitialPosRef.current = null;
+    }
   };
   
-  // Clean up event listeners if component unmounts while dragging
-  useEffect(() => {
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, []);
-
   return (
     <div 
       ref={handleRef}
@@ -172,10 +135,14 @@ const DragHandle: React.FC<DragHandleProps> = ({ instanceId, onMoveComponent }) 
       style={{ 
         opacity: isDragging ? 0.5 : 1, 
         cursor: isDragging ? 'grabbing' : 'grab', 
-        touchAction: 'none',
+        touchAction: 'none', // Important for pointer events
         userSelect: 'none',
       }}
-      onMouseDown={handleMouseDown}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onLostPointerCapture={handlePointerCancel}
     >
       <div className="drag-handle-dots">
         <div className="drag-handle-dot"></div>

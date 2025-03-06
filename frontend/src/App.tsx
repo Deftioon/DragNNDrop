@@ -11,7 +11,7 @@ import componentsData from "./data/components.json";
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
 import { FieldConfig } from "./components/GenericComponent";
 import { ConnectionNodeData } from "./components/ConnectionNode";
-import { validateImportedData } from "./utils/exportUtils";
+import { importFromJson, validateImportedData } from "./utils/exportUtils";
 
 export interface ComponentData {
   id: string;
@@ -30,7 +30,7 @@ export interface DroppedComponent extends ComponentData {
 }
 
 function AppContent() {
-  const { toggleTheme: _, theme: __ } = useTheme();
+  const { toggleTheme, theme } = useTheme();
   const [droppedComponents, setDroppedComponents] = useState<DroppedComponent[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
 
@@ -47,7 +47,7 @@ function AppContent() {
         ...componentData,
         instanceId: uuidv4(),
         position,
-        state: {}
+        state: {} // Initialize with empty state
       };
 
       setDroppedComponents((prev) => [...prev, newComponent]);
@@ -87,7 +87,9 @@ function AppContent() {
     );
   };
 
+  // Handle connection creation
   const handleCreateConnection = (connectionData: Omit<Connection, 'id'>) => {
+    // Check if a similar connection already exists to prevent duplicates
     const exists = connections.some(
       conn =>
         conn.sourceComponentId === connectionData.sourceComponentId &&
@@ -107,16 +109,19 @@ function AppContent() {
     }
   };
 
+  // Handle connection deletion
   const handleDeleteConnection = (connectionId: string) => {
     setConnections(prev => prev.filter(conn => conn.id !== connectionId));
   };
 
+  // Add viewport state for connection manager
   const [viewport, setViewport] = useState({ 
     scale: 1, 
     translateX: 0, 
     translateY: 0 
   });
   
+  // Handle viewport updates from DropArea
   const handleViewportChange = (newViewport: { 
     scale: number; 
     translateX: number; 
@@ -125,24 +130,25 @@ function AppContent() {
     setViewport(newViewport);
   };
 
-  const handleImport = (jsonData: string) => {
+  // Handle import of JSON data
+  const handleImport = (jsonData: string): boolean => {
     try {
-      const parsedData = JSON.parse(jsonData);
-      const validatedData = validateImportedData(parsedData);
+      const importedData = importFromJson(jsonData);
+      const validatedData = validateImportedData(importedData);
       
       if (!validatedData) {
-        alert('Invalid or incompatible project file');
+        console.error("Failed to validate imported data");
         return false;
       }
       
+      // Update application state with imported data
       setDroppedComponents(validatedData.components);
       setConnections(validatedData.connections);
       
-      console.log(`Successfully imported project: ${validatedData.metadata?.name || 'Unnamed project'}`);
+      console.log("Successfully imported project:", validatedData.metadata.name);
       return true;
     } catch (error) {
-      console.error('Error importing project:', error);
-      alert('Could not import project: Invalid file format');
+      console.error("Error importing data:", error);
       return false;
     }
   };
@@ -169,6 +175,7 @@ function AppContent() {
             connections={connections}
             onCreateConnection={handleCreateConnection}
             onDeleteConnection={handleDeleteConnection}
+            viewportTransform={viewport}
           />
         </div>
       </div>
